@@ -11,8 +11,8 @@ Getting Started
 
 Install Dependencies
 --------------------
-1. `rustc` >= 1.71.0 with the `wasm32-unknown-unknown` target installed. See https://soroban.stellar.org/docs/getting-started/setup#install-rust . If you have already a lower version, the easiest way to upgrade is to uninstall (`rustup self uninstall`) and install it again.
-2. `soroban-cli`. See https://soroban.stellar.org/docs/getting-started/setup#install-the-soroban-cli, but instead of `cargo install soroban-cli`, run `cargo install_soroban`. This is an alias set up in [.cargo/config.toml](./.cargo/config.toml), which pins the local soroban-cli to a specific version. If you add `./target/bin/` [to your PATH](https://linuxize.com/post/how-to-add-directory-to-path-in-linux/), then you'll automatically use this version of `soroban-cli` when you're in this directory.
+1. `rustc` >= 1.74.0 with the `wasm32-unknown-unknown` target installed. See https://soroban.stellar.org/docs/getting-started/setup#install-rust . If you have already a lower version, the easiest way to upgrade is to uninstall (`rustup self uninstall`) and install it again.
+2. `soroban-cli` will be installed to a local hidden directory of project folder as part of setup performed later, there is an alias set up in [.cargo/config.toml](./.cargo/config.toml), which pins the local soroban-cli to a specific version. If you add `./target/bin/` [to your PATH](https://linuxize.com/post/how-to-add-directory-to-path-in-linux/), then you'll automatically use this version of `soroban-cli` when you're in this directory.
 3. If you want to run everything locally: `docker` (you can run both Standalone and Futurenet backends with it)
 4. Node.js v18
 5. [Freighter Wallet](https://www.freighter.app/) ≥[v5.0.2](https://github.com/stellar/freighter/releases/tag/2.9.1). Or from the Firefox / Chrome extension store. Once installed, enable "Experimental Mode" in the settings (gear icon).
@@ -28,18 +28,16 @@ Run Backend
 
 Make sure to start from a clean setup:
 ```
-npm run clean
+npm run reset
 ```
 
 You have three options: 1. Deploy on [Futurenet](https://soroban.stellar.org/docs/getting-started/deploy-to-futurenet) using a remote [RPC](https://soroban.stellar.org/docs/getting-started/run-rpc) endpoint, 2. Run your own Futerenet RPC node with Docker and deploy to it, 3. run in [localnet/standalone](https://soroban.stellar.org/docs/getting-started/deploy-to-a-local-network) mode.
 
 ### Option 1: Deploy on Futurenet
 
-0. Make sure you have soroban-cli installed, as explained above
-
 1. Deploy the contracts and initialize them
 
-       npm run setup
+       `npm run reset`
 
    This runs `./initialize.sh futurenet` behind the scenes, which will create a `token-admin` identity for you (`soroban config identity create token-admin`) and deploy a Fungible Token contract as well as the [crowdfund contract](./contracts/crowdfund), with this account as admin.
 
@@ -47,21 +45,15 @@ You have three options: 1. Deploy on [Futurenet](https://soroban.stellar.org/doc
 
 ### Option 2: Run your own Futurenet node
 
-1. Run the backend docker container with `./quickstart.sh futurenet`, and wait for it to start.
+1. In one terminal, run the backend docker container with `./quickstart.sh futurenet`, and wait for it to start.
 
    **Note:** This can take up to 5 minutes to start syncing. You can tell it is
    working by visiting http://localhost:8000/, and look at the
    `ingest_latest_ledger`, field. If it is `0`, the quickstart image is not ready yet. The quickstart container also prints console statements on start status, it will print `soroban rpc: waiting for ready state...` at first and then `soroban rpc: up and ready` when network sync has been reached.
 
-2. Load the contracts and initialize them
+2. In second terminal, deploy the contracts and initialize them
 
-   Use your own local soroban-cli:
-
-       ./initialize.sh futurenet http://localhost:8000
-
-   Or run it inside the soroban-preview docker container:
-
-       docker exec soroban-preview ./initialize.sh futurenet
+    `SOROBAN_RPC_HOST=http://localhost:8000 npm run reset`
 
 3. Add the Futurenet custom network in Freighter (Note, the out-of-the-box
    "Future Net" network in Freighter will not work with a local quickstart
@@ -81,11 +73,7 @@ You have three options: 1. Deploy on [Futurenet](https://soroban.stellar.org/doc
 
 ### Option 3: Localnet/Standalone
 
-0. If you didn't yet, build the `soroban-preview` docker image, as described above:
-
-       make build-docker
-
-1. In one terminal, run the backend docker containers and wait for them to start:
+1. In one terminal, run the backend docker container with `./quickstart.sh futurenet`, and wait for it to start.
 
        ./quickstart.sh standalone
 
@@ -93,17 +81,11 @@ You have three options: 1. Deploy on [Futurenet](https://soroban.stellar.org/doc
 
    You can stop this process with <kbd>ctrl</kbd><kbd>c</kbd>
 
-2. Keep that running, then deploy the contracts and initialize them:
+2. In second terminal, deploy the contracts and initialize them:
 
-   You can use your own local soroban-cli:
+   `NETWORK=standalone npm run reset`
 
-       NETWORK=standalone npm run setup
-
-   Or run it inside the soroban-preview docker container:
-
-       docker exec soroban-preview ./initialize.sh standalone
-
-   **Note:** this state will be lost if the quickstart docker container is removed, which will happen if you stop the `quickstart.sh` process. You will need to re-run `./initialize.sh` every time you restart the container.
+   **Note:** this state will be lost if the quickstart docker container is removed, which will happen if you stop the `quickstart.sh` process. You will need to run `NETWORK=standalone npm run setup` any time you restart the container.
 
 3. Add the Standalone custom network in Freighter
 
