@@ -16,8 +16,8 @@ fi
 if [[ -f "./target/bin/soroban" ]]; then
   echo "Using soroban binary from ./target/bin"
 else
-  echo "Building pinned soroban binary"
-  cargo install_soroban
+  echo "Building soroban 21.0.0-rc.1"
+  cargo cargo install --locked soroban-cli --version 21.0.0-rc.1
 fi
 
 if [[ "$SOROBAN_RPC_HOST" == "" ]]; then
