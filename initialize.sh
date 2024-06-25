@@ -92,13 +92,13 @@ ABUNDANCE_ID="$(
 echo "Contract deployed succesfully with ID: $ABUNDANCE_ID"
 echo -n "$ABUNDANCE_ID" > .soroban-example-dapp/abundance_token_id
 
-echo Deploy the crowdfund contract
-CROWDFUND_ID="$(
-  soroban contract deploy $ARGS \
-    --wasm target/wasm32-unknown-unknown/release/soroban_crowdfund_contract.wasm
-)"
-echo "Contract deployed succesfully with ID: $CROWDFUND_ID"
-echo "$CROWDFUND_ID" > .soroban-example-dapp/crowdfund_id
+# echo Deploy the crowdfund contract
+# CROWDFUND_ID="$(
+#   soroban contract deploy $ARGS \
+#     --wasm target/wasm32-unknown-unknown/release/soroban_crowdfund_contract.wasm
+# )"
+# echo "Contract deployed succesfully with ID: $CROWDFUND_ID"
+# echo "$CROWDFUND_ID" > .soroban-example-dapp/crowdfund_id
 
 echo "Initialize the abundance token contract"
 soroban contract invoke \
@@ -111,15 +111,15 @@ soroban contract invoke \
   --name abundance \
   --admin "$ABUNDANCE_ADMIN_ADDRESS"
 
-echo "Initialize the crowdfund contract"
-deadline="$(($(date +"%s") + 86400))"
-soroban contract invoke \
-  $ARGS \
-  --id "$CROWDFUND_ID" \
-  -- \
-  initialize \
-  --recipient "$ABUNDANCE_ADMIN_ADDRESS" \
-  --deadline "$deadline" \
-  --target_amount "1000000000" \
-  --token "$ABUNDANCE_ID"
-echo "Done"
+# echo "Initialize the crowdfund contract"
+# deadline="$(($(date +"%s") + 86400))"
+# soroban contract invoke \
+#   $ARGS \
+#   --id "$CROWDFUND_ID" \
+#   -- \
+#   initialize \
+#   --recipient "$ABUNDANCE_ADMIN_ADDRESS" \
+#   --deadline "$deadline" \
+#   --target_amount "1000000000" \
+#   --token "$ABUNDANCE_ID"
+# echo "Done"
