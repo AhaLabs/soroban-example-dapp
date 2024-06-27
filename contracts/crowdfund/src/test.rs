@@ -245,7 +245,11 @@ fn sale_successful_non_recipient_still_denied_after_withdrawal() {
 #[should_panic(expected = "sale was successful, recipient has withdrawn funds already")]
 fn sale_successful_recipient_withdraws_only_once() {
     let setup = Setup::new();
-    setup.crowdfund.client().deposit(&setup.user2, &5);
+    setup
+        .crowdfund
+        .client()
+        .mock_all_auths()
+        .deposit(&setup.user2, &5);
     advance_ledger(&setup.env, 10);
 
     setup
