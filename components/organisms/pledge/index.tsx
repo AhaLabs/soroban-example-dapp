@@ -29,29 +29,29 @@ const Pledge: FunctionComponent = () => {
     target: BigInt
   }>()
 
-  // React.useEffect(() => {
-  //   Promise.all([
-  //     abundanceContract.balance({ id: crowdfundContract.contractId }),
-  //     abundanceContract.decimals(),
-  //     abundanceContract.name(),
-  //     abundanceContract.symbol(),
+  React.useEffect(() => {
+    Promise.all([
+      abundanceContract.balance({ id: crowdfundContract.contractId }),
+      abundanceContract.decimals(),
+      abundanceContract.name(),
+      abundanceContract.symbol(),
 
-  //     crowdfundContract.deadline(),
-  //     crowdfundContract.target(),
-  //   ]).then(fetched => {
-  //     setAbundance({
-  //       balance: fetched[0],
-  //       decimals: fetched[1],
-  //       name: fetched[2].toString(),
-  //       symbol: fetched[3].toString(),
-  //     })
+      crowdfundContract.deadline(),
+      crowdfundContract.target(),
+    ]).then(fetched => {
+      setAbundance({
+        balance: fetched[0],
+        decimals: fetched[1],
+        name: fetched[2].toString(),
+        symbol: fetched[3].toString(),
+      })
 
-  //     setCrowdfund({
-  //       deadline: new Date(Number(fetched[4]) * 1000),
-  //       target: fetched[5],
-  //     })
-  //   })
-  // }, [updatedAt])
+      setCrowdfund({
+        deadline: new Date(Number(fetched[4]) * 1000),
+        target: fetched[5],
+      })
+    })
+  }, [updatedAt])
 
   const [targetReached, setTargetReached] = useState<boolean>(false)
 
