@@ -8,10 +8,6 @@ export const abundance = new Abundance.Contract(
   Abundance.networks[network as keyof typeof Abundance.networks].contractId
 )
 
-console.log(
-  Abundance.networks[network as keyof typeof Abundance.networks].contractId
-)
-
 export const crowdfund = new Crowdfund.Contract(
   Crowdfund.networks[network as keyof typeof Crowdfund.networks].contractId
 )
