@@ -8,8 +8,8 @@ STELLAR_RPC_HOST="$2"
 
 PATH=./target/bin:$PATH
 
-if [[ -f "./.stellar-example-dapp/crowdfund_id" ]]; then
-  echo "Found existing './.stellar-example-dapp' directory; already initialized."
+if [[ -f "./.soroban-example-dapp/crowdfund_id" ]]; then
+  echo "Found existing './.soroban-example-dapp' directory; already initialized."
   exit 0
 fi
 
@@ -70,11 +70,11 @@ stellar network add \
   --rpc-url "$STELLAR_RPC_URL" \
   --network-passphrase "$STELLAR_NETWORK_PASSPHRASE" "$NETWORK"
 
-echo Add $NETWORK to .stellar-example-dapp for use with npm scripts
-mkdir -p .stellar-example-dapp
-echo $NETWORK > ./.stellar-example-dapp/network
-echo $STELLAR_RPC_URL > ./.stellar-example-dapp/rpc-url
-echo "$STELLAR_NETWORK_PASSPHRASE" > ./.stellar-example-dapp/passphrase
+echo Add $NETWORK to .soroban-example-dapp for use with npm scripts
+mkdir -p .soroban-example-dapp
+echo $NETWORK > ./.soroban-example-dapp/network
+echo $STELLAR_RPC_URL > ./.soroban-example-dapp/rpc-url
+echo "$STELLAR_NETWORK_PASSPHRASE" > ./.soroban-example-dapp/passphrase
 echo "{ \"network\": \"$NETWORK\", \"rpcUrl\": \"$STELLAR_RPC_URL\", \"networkPassphrase\": \"$STELLAR_NETWORK_PASSPHRASE\" }" > ./shared/config.json
 
 if !(stellar keys ls | grep token-admin 2>&1 >/dev/null); then
@@ -102,6 +102,7 @@ ABUNDANCE_ID="$(
     --alias abundance
 )"
 echo "Contract deployed succesfully with ID: $ABUNDANCE_ID"
+echo -n "$ABUNDANCE_ID" > .soroban-example-dapp/abundance_token_id
 
 # echo Deploy the crowdfund contract
 CROWDFUND_ID="$(
@@ -110,6 +111,7 @@ CROWDFUND_ID="$(
     --alias crowdfund
 )"
 echo "Contract deployed succesfully with ID: $CROWDFUND_ID"
+echo -n "$CROWDFUND_ID" > .soroban-example-dapp/crowdfund_id
 
 echo "Initialize the abundance token contract"
 stellar contract invoke \
