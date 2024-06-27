@@ -3,10 +3,7 @@ import { Card, ConnectButton, Loading, ProgressBar } from '../../atoms'
 import styles from './style.module.css'
 import { Spacer } from '../../atoms/spacer'
 import { Utils } from '../../../shared/utils'
-import {
-  useAccount,
-  useSubscription,
-} from '../../../hooks'
+import { useAccount, useSubscription } from '../../../hooks'
 import {
   crowdfund as crowdfundContract,
   abundance as abundanceContract,
@@ -32,47 +29,56 @@ const Pledge: FunctionComponent = () => {
     target: BigInt
   }>()
 
-  React.useEffect(() => {
-    Promise.all([
-      abundanceContract.balance({ id: crowdfundContract.options.contractId }),
-      abundanceContract.decimals(),
-      abundanceContract.name(),
-      abundanceContract.symbol(),
+  // React.useEffect(() => {
+  //   Promise.all([
+  //     abundanceContract.balance({ id: crowdfundContract.contractId }),
+  //     abundanceContract.decimals(),
+  //     abundanceContract.name(),
+  //     abundanceContract.symbol(),
 
-      crowdfundContract.deadline(),
-      crowdfundContract.target(),
-    ]).then(fetched => {
-      setAbundance({
-        balance: fetched[0],
-        decimals: fetched[1],
-        name: fetched[2].toString(),
-        symbol: fetched[3].toString(),
-      })
+  //     crowdfundContract.deadline(),
+  //     crowdfundContract.target(),
+  //   ]).then(fetched => {
+  //     setAbundance({
+  //       balance: fetched[0],
+  //       decimals: fetched[1],
+  //       name: fetched[2].toString(),
+  //       symbol: fetched[3].toString(),
+  //     })
 
-      setCrowdfund({
-        deadline: new Date(Number(fetched[4]) * 1000),
-        target: fetched[5],
-      })
-    })
-  }, [updatedAt])
+  //     setCrowdfund({
+  //       deadline: new Date(Number(fetched[4]) * 1000),
+  //       target: fetched[5],
+  //     })
+  //   })
+  // }, [updatedAt])
 
   const [targetReached, setTargetReached] = useState<boolean>(false)
 
   useSubscription(
-    crowdfundContract.options.contractId,
+    crowdfundContract.contractId(),
     'pledged_amount_changed',
-    React.useMemo(() => event => {
-      let eventTokenBalance = xdr.ScVal.fromXDR(event.value.xdr, 'base64')
-      setAbundance({ ...abundance!, balance: SorobanClient.scValToNative(eventTokenBalance) })
-    }, [abundance])
+    React.useMemo(
+      () => event => {
+        let eventTokenBalance = xdr.ScVal.fromXDR(event.value.xdr, 'base64')
+        setAbundance({
+          ...abundance!,
+          balance: SorobanClient.scValToNative(eventTokenBalance),
+        })
+      },
+      [abundance]
+    )
   )
 
   useSubscription(
-    crowdfundContract.options.contractId,
+    crowdfundContract.contractId(),
     'target_reached',
-    React.useMemo(() => () => {
-      setTargetReached(true)
-    }, [])
+    React.useMemo(
+      () => () => {
+        setTargetReached(true)
+      },
+      []
+    )
   )
 
   return (
@@ -81,19 +87,22 @@ const Pledge: FunctionComponent = () => {
         <Loading size={64} />
       ) : (
         <>
-          {targetReached && (
-            <h6>SUCCESSFUL CAMPAIGN !!</h6>
-          )}
+          {targetReached && <h6>SUCCESSFUL CAMPAIGN !!</h6>}
           <h6>PLEDGED</h6>
           <div className={styles.pledgeAmount}>
-            {Utils.formatAmount(abundance.balance, abundance.decimals)} {abundance.symbol}
+            {Utils.formatAmount(abundance.balance, abundance.decimals)}{' '}
+            {abundance.symbol}
           </div>
           <span className={styles.pledgeGoal}>{`of ${Utils.formatAmount(
             crowdfund.target,
             abundance.decimals
           )} ${abundance.symbol} goal`}</span>
           <ProgressBar
-            value={Utils.percentage(abundance.balance, crowdfund.target, abundance.decimals)}
+            value={Utils.percentage(
+              abundance.balance,
+              crowdfund.target,
+              abundance.decimals
+            )}
           />
           <div className={styles.wrapper}>
             <div>
