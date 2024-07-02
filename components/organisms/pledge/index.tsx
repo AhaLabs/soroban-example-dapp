@@ -31,7 +31,7 @@ const Pledge: FunctionComponent = () => {
 
   React.useEffect(() => {
     Promise.all([
-      abundanceContract.balance({ id: crowdfundContract.contractId }),
+      abundanceContract.balance({ id: crowdfundContract.options.contractId }),
       abundanceContract.decimals(),
       abundanceContract.name(),
       abundanceContract.symbol(),
@@ -40,15 +40,15 @@ const Pledge: FunctionComponent = () => {
       crowdfundContract.target(),
     ]).then(fetched => {
       setAbundance({
-        balance: fetched[0],
-        decimals: fetched[1],
-        name: fetched[2].toString(),
-        symbol: fetched[3].toString(),
+        balance: fetched[0].result,
+        decimals: fetched[1].result,
+        name: fetched[2].result.toString(),
+        symbol: fetched[3].result.toString(),
       })
 
       setCrowdfund({
-        deadline: new Date(Number(fetched[4]) * 1000),
-        target: fetched[5],
+        deadline: new Date(Number(fetched[4].result) * 1000),
+        target: fetched[5].result,
       })
     })
   }, [updatedAt])
@@ -56,11 +56,14 @@ const Pledge: FunctionComponent = () => {
   const [targetReached, setTargetReached] = useState<boolean>(false)
 
   useSubscription(
-    crowdfundContract.contractId(),
+    crowdfundContract.options.contractId,
     'pledged_amount_changed',
     React.useMemo(
       () => event => {
+        console.log('wolf')
         let eventTokenBalance = xdr.ScVal.fromXDR(event.value.xdr, 'base64')
+        console.log('fence')
+        console.log('stuff', SorobanClient.scValToNative(eventTokenBalance))
         setAbundance({
           ...abundance!,
           balance: SorobanClient.scValToNative(eventTokenBalance),
@@ -71,7 +74,7 @@ const Pledge: FunctionComponent = () => {
   )
 
   useSubscription(
-    crowdfundContract.contractId(),
+    crowdfundContract.options.contractId,
     'target_reached',
     React.useMemo(
       () => () => {
