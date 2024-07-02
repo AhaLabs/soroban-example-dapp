@@ -61,7 +61,7 @@ const Pledge: FunctionComponent = () => {
           ...abundance!,
           balance: crowdfundContract.spec.funcResToNative(
             'balance',
-            event.value.xdr
+            event.value
           ),
         })
       },

@@ -5,11 +5,13 @@ import config from './config.json'
 const { network, rpcUrl } = config
 
 export const abundance = new Abundance.Client({
+  allowHttp: rpcUrl.startsWith('http:'),
   rpcUrl,
   ...Abundance.networks[network as keyof typeof Abundance.networks],
 })
 
 export const crowdfund = new Crowdfund.Client({
+  allowHttp: rpcUrl.startsWith('http:'),
   rpcUrl,
   ...Crowdfund.networks[network as keyof typeof Crowdfund.networks],
 })

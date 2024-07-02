@@ -28,7 +28,7 @@ const paging: Record<
 export function useSubscription(
   contractId: string,
   topic: string,
-  onEvent: (event: SorobanRpc.EventResponse) => void,
+  onEvent: (event: SorobanRpc.Api.EventResponse) => void,
   pollInterval = 5000
 ) {
   const id = `${contractId}:${topic}`

@@ -5,7 +5,7 @@ import { Utils } from '../../../shared/utils'
 import styles from './style.module.css'
 import { Spacer } from '../../atoms/spacer'
 import { abundance, crowdfund } from '../../../shared/contracts'
-import { signTransaction } from '@stellar/freighter-api'
+import { getPublicKey, signTransaction } from '@stellar/freighter-api'
 
 export interface IFormPledgeProps {
   account: string
@@ -46,7 +46,11 @@ function MintButton({
       title={`Mint ${displayAmount} ${symbol}`}
       onClick={async () => {
         setSubmitting(true)
-        const tx = await abundance.mint({ to: account, amount })
+        const tx = await abundance.mint(
+          { to: account, amount },
+          // @ts-expect-error publicKey gets passed along, but the types don't know that!
+          { publicKey: await getPublicKey() }
+        )
         await tx.signAndSend({ signTransaction })
         setSubmitting(false)
         onComplete()
@@ -89,10 +93,18 @@ const FormPledge: FunctionComponent<IFormPledgeProps> = props => {
     setSubmitting(true)
 
     try {
-      await crowdfund.deposit({
-        user: props.account,
-        amount: BigInt(amount * 10 ** decimals),
-      })
+      const tx = await crowdfund.deposit(
+        {
+          user: props.account,
+          amount: BigInt(amount * 10 ** decimals),
+        },
+        {
+          // @ts-expect-error publicKey gets passed along, but the types don't know that!
+          publicKey: await getPublicKey(),
+        }
+      )
+
+      await tx.signAndSend({ signTransaction })
 
       setResultSubmit({
         status: 'success',
