@@ -1,7 +1,6 @@
 import * as React from 'react'
 import { server } from '../shared/contracts'
-import * as SorobanClient from 'soroban-client'
-let xdr = SorobanClient.xdr
+import { xdr, SorobanRpc } from '@stellar/stellar-sdk'
 
 /**
  * Concatenated `${contractId}:${topic}`
@@ -29,7 +28,7 @@ const paging: Record<
 export function useSubscription(
   contractId: string,
   topic: string,
-  onEvent: (event: SorobanClient.SorobanRpc.EventResponse) => void,
+  onEvent: (event: SorobanRpc.EventResponse) => void,
   pollInterval = 5000
 ) {
   const id = `${contractId}:${topic}`
@@ -49,7 +48,7 @@ export function useSubscription(
           ? paging[id].lastLedgerStart
           : undefined
 
-        const params: SorobanClient.Server.GetEventsRequest = {
+        const params: SorobanRpc.Server.GetEventsRequest = {
           startLedger,
           cursor: paging[id].pagingToken,
           filters: [

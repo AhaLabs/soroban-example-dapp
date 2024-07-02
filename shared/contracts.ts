@@ -1,6 +1,6 @@
 import * as Abundance from 'abundance-token'
 import * as Crowdfund from 'crowdfund-contract'
-import { Server } from 'soroban-client'
+import { SorobanRpc } from '@stellar/stellar-sdk'
 import config from './config.json'
 const { network, rpcUrl } = config
 
@@ -14,6 +14,6 @@ export const crowdfund = new Crowdfund.Client({
   ...Crowdfund.networks[network as keyof typeof Crowdfund.networks],
 })
 
-export const server = new Server(rpcUrl, {
+export const server = new SorobanRpc.Server(rpcUrl, {
   allowHttp: rpcUrl.startsWith('http:'),
 })
