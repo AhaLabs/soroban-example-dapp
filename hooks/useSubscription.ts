@@ -64,7 +64,7 @@ export function useSubscription(
 
         paging[id].pagingToken = undefined
         if (response.latestLedger) {
-          paging[id].lastLedgerStart = parseInt(response.latestLedger)
+          paging[id].lastLedgerStart = response.latestLedger
         }
         response.events &&
           response.events.forEach(event => {
