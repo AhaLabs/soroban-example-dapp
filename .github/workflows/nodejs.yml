@@ -25,7 +25,7 @@ jobs:
       - run: cargo install_stellar
       - uses: actions/setup-node@v3
         with:
-          node-version: 18.14.2
+          node-version: 18.20.3
           cache: 'npm'
       - run: |
           mkdir -p .soroban-example-dapp

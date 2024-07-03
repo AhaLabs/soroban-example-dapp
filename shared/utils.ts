@@ -13,7 +13,7 @@ export function formatAmount(undivided: BigInt, decimals: number): string {
   const n =
     undivided.valueOf() < BigInt(Number.MAX_SAFE_INTEGER)
       ? Number(undivided) / 10 ** decimals
-      : undivided.valueOf() / 10n ** BigInt(decimals)
+      : undivided.valueOf() / BigInt(10) ** BigInt(decimals)
   return String(n)
 }
 
